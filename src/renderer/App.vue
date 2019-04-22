@@ -9,3 +9,9 @@
     name: 'ketarn'
   }
 </script>
+
+<style>
+ *{
+   user-select: none;
+ }
+</style>
