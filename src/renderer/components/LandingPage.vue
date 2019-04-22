@@ -21,7 +21,6 @@
         <Input v-model="username" class="m10" placeholder="Username" style="width: 300px;" /><br>
         <Input v-model="password" class="m10" type="password" placeholder="Password" style="width: 300px;" /><br>
         <Button @click="signIn()" type="primary" class="m10">Sign In</Button><br>
-        <!-- <Button @click="getPrincipal()">Principal</Button> -->
         <Button @click="toggleScreens()" class="m10" type="dashed">Or Sign Up</Button><br>
       </div>
     </div>
@@ -42,8 +41,9 @@
 <script>
   import axios from 'axios';
   import MD5 from 'crypto-js/md5'; // password is encrypted in md5 and stored to db
+  var remote = require('electron').remote;
 
-  const API = "http://localhost:1337/";
+  const API = "http://localhost:1337/"; // url where are all our requests sent to
 
   export default {
     name: 'landing-page',
@@ -58,7 +58,7 @@
         autoLoginModal: false
       }
     },
-    beforeMount() {
+    mounted() {
       this.$Loading.start();
 
       axios.get(API + 'checkServer') // it simply returns a string. If we don't get a response => no connection
@@ -69,25 +69,26 @@
           // we don't need to know any response from the server
         })
         .catch(err =>{
-          this.$Loading.finish();
+          this.$Loading.error();
           this.showError('No connection to the server', 3600)
         }); // no connection
     },
     methods: {
       toggleScreens()
       {
-        this.screensToggled = !this.screensToggled;
+        this.screensToggled = !this.screensToggled; // swaps between sign in & sign up screens
       },
       signIn()
       {
         var authentication = {
+          // auth information is taken either from textfields or from localstorage
           username: this.username || localStorage.getItem('username'),
           password: this.password || localStorage.getItem('password')
         }
 
         axios(API + 'loginRequest', {
           method: 'GET',
-          auth: authentication
+          auth: authentication // we send auth data in every request
         })
         .then(response => {
           if(response.data == null) {
@@ -112,6 +113,8 @@
           localStorage.clear();
         });
 
+
+        // clear textfields after pressing 'Sign In' button
         this.username = '';
         this.password = '';
         this.email = '';
@@ -132,6 +135,7 @@
             this.showError('All fields are required!', 3);
         }).catch(err => this.showError('Error has occurred while registration', 3));
 
+        // clear textfields after pressing 'Sign In' button
         this.username = '';
         this.password = '';
         this.email = '';
@@ -154,7 +158,7 @@
       },
       loginDataSaved()
       {
-        return localStorage.getItem('username') != '' && localStorage.getItem('password') != '';
+        return localStorage.getItem('username') != null && localStorage.getItem('password') != null;
       }
     }
   }
