@@ -80,6 +80,9 @@
       },
       signIn()
       {
+
+        this.$Loading.start();
+
         var authentication = {
           // auth information is taken either from textfields or from localstorage
           username: this.username || localStorage.getItem('username'),
@@ -91,11 +94,19 @@
           auth: authentication // we send auth data in every request
         })
         .then(response => {
-          if(response.data == null) {
+          if(response.data == null)
+          {
              this.showError('Username or password is invalid', 2);
              localStorage.clear();
+             this.$Loading.error();
           }
-          else this.showMessage('Signed in successfully', 2);
+          
+          else
+          {
+            this.$Loading.finish();
+            this.showMessage('Signed in successfully', 2);
+          } 
+
           this.userObject = response.data;
 
           localStorage.setItem('username', authentication.username);
@@ -111,8 +122,8 @@
         }).catch(err => {
           this.showError('Username or password is invalid', 2);
           localStorage.clear();
+          this.$Loading.error();
         });
-
 
         // clear textfields after pressing 'Sign In' button
         this.username = '';
@@ -121,6 +132,8 @@
       },
       signUp()
       {
+        this.$Loading.start();
+
         axios.post(API + 'signUp', {
           username: this.username,
           password: this.password,
@@ -130,10 +143,17 @@
           {
             this.showMessage('Registered successfully. You can now sign in', 3);
             this.toggleScreens();
+            this.$Loading.finish();
           }
           else 
+          {
             this.showError('All fields are required!', 3);
-        }).catch(err => this.showError('Error has occurred while registration', 3));
+            this.$Loading.error();
+          }
+        }).catch(err => {
+            this.$Loading.error();
+            this.showError('Error has occurred while registration', 3);
+        });
 
         // clear textfields after pressing 'Sign In' button
         this.username = '';
