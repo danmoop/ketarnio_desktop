@@ -10,7 +10,7 @@
             <p>Would you like to try to sign in using those credentials?</p>
         </div>
         <div slot="footer">
-            <Button @click="autoSignIn()" type="success" size="large" long :loading="modal_loading">Sign in</Button>
+            <Button @click="autoSignIn()" type="success" size="large" long>Sign in</Button>
         </div>
     </Modal>
     
@@ -59,6 +59,9 @@
       }
     },
     mounted() {
+
+      remote.getCurrentWindow().setTitle('Ketarn');
+
       this.$Loading.start();
 
       axios.get(API + 'checkServer') // it simply returns a string. If we don't get a response => no connection

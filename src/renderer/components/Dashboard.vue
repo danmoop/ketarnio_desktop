@@ -1,37 +1,14 @@
 <template>
     <div>
-        <Modal v-model="NoteModal" width="360">
-            <p slot="header" style="color:#42b983;text-align:center">
-                <Icon type="ios-brush-outline" />
-                <span>Change your notes</span>
-            </p>
-            <div style="text-align:center">
-                <Input type="text" v-model="user.note" placeholder="Notes">
-                </Input>
-            </div>
-            <div slot="footer">
-                <Button @click="setNote()" type="success" size="large">Save</Button>
-            </div>
-        </Modal>
-        <Modal v-model="projectCreationSettings.projectCreationModal" width="360">
-            <p slot="header" style="color:#42b983;text-align:center">
-                <Icon type="ios-brush-outline" />
-                <span>Create a project</span>
-            </p>
-            <div style="text-align:center">
-                <Input type="text" v-model="projectCreationSettings.projectName" placeholder="Project name">
-                </Input>
-            </div>
-            <div slot="footer">
-                <Button @click="createProject()" type="success" size="large">Create</Button>
-            </div>
-        </Modal>
+        <ProjectCreationModal ref="projectModal" :user="this.user"></ProjectCreationModal>
+        <SetNoteModal ref="NoteModal" :user="this.user"></SetNoteModal>
+        
         <Row>
             <Col class="leftBlock text-center p10" span="4">
                 <h2><Icon type="ios-contact" />{{ user.username }}</h2><br>
                 <h3><Icon type="ios-mail-outline" />{{ user.email }}</h3>
                 <Divider />
-                <Button @click="() => this.projectCreationSettings.projectCreationModal = true" class="mt-5" type="text" long>
+                <Button @click="() => this.$refs.projectModal.toggle()" class="mt-5" type="text" long>
                     <h2><Icon type="ios-brush-outline" /> Create Project</h2>
                 </Button><br>
 
@@ -69,13 +46,13 @@
                             <p class="fz20" v-if="this.user.projects.length == 0">You have no projects yet</p>
                             <ul>
                                 <li v-for="project in this.user.projects" style="list-style: none; margin-top: 10px;">
-                                    <Button>{{ project }}</Button>
+                                    <Button @click="openProject(project)"><h3>{{ project }}</h3></Button>
                                 </li>
                             </ul>
                         </Card>
                     </Col>
                     <Col span="10">
-                        <Card style="border: 1px solid #b8b8b8;">
+                        <Card style="border: 1px solid #b8b8b8; height: 100%;">
                             <h1 slot="title">Your tasks</h1>
                             <p class="fz20" v-if="this.user.tasks.length == 0">You have no tasks yet</p>
                             <Row class="text-center" v-if="this.user.tasks.length != 0">
@@ -94,7 +71,7 @@
 
                 <Card class="text-center card-border" style="width: 70%; margin: 0px auto; border: 1px solid #b8b8b8;">
                     <h1 slot="title">Your notes</h1>
-                    <Button @click="() => this.NoteModal = true">Edit</Button> <br><br>
+                    <Button @click="() => this.$refs.NoteModal.toggle()">Edit</Button> <br><br>
                     <p class="fz20" v-if="this.user.note == ''">You have no notes yet</p>
                     <p class="fz20">{{ user.note }}</p>
                 </Card>
@@ -108,25 +85,26 @@
 var remote = require('electron').remote;
 
 import axios from 'axios';
+import ProjectCreationModal from './modals/ProjectCreationModal';
+import SetNoteModal from './modals/SetNoteModal';
 
 var API = 'http://localhost:1337/';
 
 export default {
     name: 'dashboard',
+    components: {
+        ProjectCreationModal,
+        SetNoteModal
+    },
     beforeMount() {
         remote.getCurrentWindow().setTitle("Ketarn - Dashboard");
 
         this.signIn(); // delete then
+        //this.user = this.$route.params.user;
     },
     data() {
         return {
-            user: {},
-            projectCreationSettings: {
-                projectName: '',
-                projectBudget: '',
-                projectCreationModal: false
-            },
-            NoteModal: false
+            user: Object
         }
     },
     methods: {
@@ -142,25 +120,7 @@ export default {
             })
             .then(response => { 
                 this.user = response.data;
-                console.log(this.user);
             });
-        },
-        setNote()
-        {
-            var authentication = {
-                username: localStorage.getItem('username'),
-                password: localStorage.getItem('password')
-            }
-
-            axios(API + "setUserNote", {
-                method: 'post',
-                data: { text: this.user.note },
-                auth: authentication
-            }).then(response => {
-                // response doesn't matter
-                this.showMessage('Saved!', 1.5);
-                this.NoteModal = false;
-            }).catch(err => console.log(err));
         },
         logOut()
         {
@@ -196,39 +156,15 @@ export default {
         {
             this.$Message.error({content: text, duration: seconds});
         },
-        createProject()
+        openProject(project)
         {
-            var projectName = this.projectCreationSettings.projectName;
-
-            var authentication = {
-                username: localStorage.getItem('username'),
-                password: localStorage.getItem('password')
-            }
-
-            if(projectName != '' && projectName.length > 1)
-            {
-                this.$Loading.start();
-
-                this.projectCreationSettings.projectCreationModal = false;
-
-                axios(API + "createProject", {
-                    method: 'post',
-                    data: { text: this.projectCreationSettings.projectName },
-                    auth: authentication
-                }).then(response => {
-                    this.$Loading.finish();
-                    this.showMessage('Created!', 1.5);
-                    this.user.projects.push(projectName);
-                }).catch(err => {
-                    this.$Loading.error();
-                    this.showError('Error!', 1.5);
-                });
-            }
-            else
-            {
-                this.$Loading.error();
-                this.showError("Project name can't be empty or less than 2 characters!");
-            }
+            this.$router.push({
+                name: 'projectDashboard',
+                params: {
+                    user: this.user,
+                    projectName: project
+                }
+            });
         }
     }
 }

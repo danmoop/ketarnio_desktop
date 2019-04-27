@@ -18,6 +18,11 @@ export default new Router({
       path: '/dashboard',
       name: 'dashboard',
       component: require('@/components/Dashboard').default
+    },
+    {
+      path: '/projectDashboard',
+      name: 'projectDashboard',
+      component: require('@/components/ProjectDashboard').default
     }
   ]
 })
