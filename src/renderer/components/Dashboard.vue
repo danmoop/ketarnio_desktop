@@ -78,15 +78,15 @@
             </Col>
         </Row>
     </div>
-</template>
+</template>d
 
 <script>
 
 var remote = require('electron').remote;
 
 import axios from 'axios';
-import ProjectCreationModal from './modals/ProjectCreationModal';
-import SetNoteModal from './modals/SetNoteModal';
+import ProjectCreationModal from './modals/usermodals/ProjectCreationModal';
+import SetNoteModal from './modals/usermodals/SetNoteModal';
 
 var API = 'http://localhost:1337/';
 
