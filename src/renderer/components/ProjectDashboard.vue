@@ -1,16 +1,20 @@
 <template>
     <div>
-
         <ProjectNotificationModal ref="projectNotification" :project="this.project"></ProjectNotificationModal>
         <ViewProjectAdminsModal ref="adminsModal" :project="this.project"></ViewProjectAdminsModal>
         <ViewProjectMembersModal ref="membersModal" :project="this.project"></ViewProjectMembersModal>
+        <ProjectInboxModal ref="projectInboxModal" :project="this.project"></ProjectInboxModal>
+        <ProjectBudgetModal ref="projectBudgetModal" :project="this.project"></ProjectBudgetModal>
 
         <Row>
-            <Col class="leftBlock text-center p10" span="4">
+            <Col class="leftBlock text-center p10" span="5">
                 <h2><Icon type="ios-contact" />{{ user.username }}</h2><br>
                 <Divider />
-                <Button class="mt-5" type="text" long>
-                    <h2><Icon type="ios-mail-outline" /> Project Inbox ({{ user.messages.length }})</h2>
+                <Button @click="() => this.$refs.projectInboxModal.toggle()" class="mt-5" type="text" long>
+                    <h2>
+                        <Icon type="ios-mail-outline" /> Project Inbox 
+                        <Badge type="primary" :count="project.messages.length"></Badge>
+                    </h2>
                 </Button><br>
                 <Button @click="() => this.$refs.adminsModal.toggle()" class="mt-5" type="text" long>
                     <h2><Icon type="md-star-outline" /> View admins</h2>
@@ -21,8 +25,8 @@
                 <Button class="mt-5" type="text" long>
                     <h2><Icon type="ios-person-add-outline" /> Invite members</h2>
                 </Button><br>
-                <Button class="mt-5" type="text" long>
-                    <h3><Icon type="ios-cash-outline" /> Set project budget</h3>
+                <Button @click="() => this.$refs.projectBudgetModal.toggle()" class="mt-5" type="text" long>
+                    <h2><Icon type="ios-cash-outline" /> Set project budget</h2>
                 </Button><br>
                 <Button class="mt-5" type="text" long>
                     <h2><Icon type="ios-chatboxes-outline" /> Project chat</h2>
@@ -34,7 +38,7 @@
                 </Button><br>
 
             </Col>
-            <Col span="20">
+            <Col span="19">
                 <div>
                     <Row style="background: #16a085; padding: 10px;">
                         <Col span="12">
@@ -118,13 +122,17 @@
     import ProjectNotificationModal from './modals/projectmodals/ProjectNotificationModal';
     import ViewProjectAdminsModal from './modals/projectmodals/ViewProjectAdminsModal';
     import ViewProjectMembersModal from './modals/projectmodals/ViewProjectMembersModal';
+    import ProjectInboxModal from './modals/projectmodals/ProjectInboxModal';
+    import ProjectBudgetModal from './modals/projectmodals/ProjectBudgetModal';
 
     export default {
         name: 'projectDashboard',
         components: {
             ProjectNotificationModal,
             ViewProjectAdminsModal,
-            ViewProjectMembersModal
+            ViewProjectMembersModal,
+            ProjectInboxModal,
+            ProjectBudgetModal
         },
         data() {
             return {
@@ -179,6 +187,10 @@
 
                 if(messageShown)
                     this.showMessage('Done!', 1.5);
+            },
+            setProject(project)
+            {
+                this.project = project;
             },
             showMessage(text, seconds)
             {

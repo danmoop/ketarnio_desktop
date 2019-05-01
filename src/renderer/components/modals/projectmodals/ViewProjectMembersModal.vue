@@ -2,7 +2,7 @@
     <div>
         <Modal v-model="isModalActive" width="360">
             <p slot="header" style="color:#42b983;text-align:center">
-                <Icon type="ios-star-outline" />
+                <Icon type="ios-people-outline" />
                 <span>{{ project.projectName}} members ({{ project.members.length }})</span>
             </p>
             <div style="text-align:center">

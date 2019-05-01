@@ -6,7 +6,7 @@
                 <span>Set / delete a notification for all the members</span>
             </p>
             <div style="text-align:center">
-                <Input type="text" v-model="notificationText" placeholder="Notification text">
+                <Input size="large" type="text" v-model="notificationText" placeholder="Notification text">
                 </Input>
             </div>
             <div slot="footer">

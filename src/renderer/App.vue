@@ -16,4 +16,12 @@
  *{
    user-select: none;
  }
+
+ .text-center {
+   text-align: center;
+ }
+
+ .fz18 {
+   font-size: 18px;
+ }
 </style>

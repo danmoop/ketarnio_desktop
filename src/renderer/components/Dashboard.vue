@@ -13,7 +13,7 @@
                 </Button><br>
 
                 <Button class="mt-5" type="text" long>
-                    <h2><Icon type="ios-mail-outline" /> Inbox ({{ user.messages.length }})</h2>
+                    <h2><Icon type="ios-mail-outline" /> Inbox <Badge type="primary" :count="user.messages.length"></Badge></h2>
                 </Button><br>
 
                 <Button class="mt-5" type="text" long>
