@@ -1,12 +1,12 @@
 <template>
     <div>
-        <Modal v-model="NoteModal" width="360">
+        <Modal v-model="isModalActive" width="360">
             <p slot="header" style="color:#42b983;text-align:center">
                 <Icon type="ios-brush-outline" />
                 <span>Change your notes</span>
             </p>
             <div style="text-align:center">
-                <Input type="text" v-model="user.note" placeholder="Notes">
+                <Input size="large" type="text" v-model="user.note" placeholder="Notes">
                 </Input>
             </div>
             <div slot="footer">
@@ -27,7 +27,7 @@
         },
         data() {
             return {
-                NoteModal: false
+                isModalActive: false
             }
         },
         methods: {
@@ -45,12 +45,12 @@
                 }).then(response => {
                     // response doesn't matter
                     this.showMessage('Saved!', 1.5);
-                    this.NoteModal = false;
+                    this.isModalActive = false;
                 }).catch(err => console.log(err));
             },
             toggle() 
             {
-                this.NoteModal = true;
+                this.isModalActive = true;
             },
             showMessage(text, seconds)
             {

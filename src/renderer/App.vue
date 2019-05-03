@@ -13,15 +13,25 @@
 </script>
 
 <style>
- *{
-   user-select: none;
- }
+  @font-face {
+    font-family: 'eina';
+    src: url("./fonts/Eina.woff2") format("woff2");
+  }
 
- .text-center {
-   text-align: center;
- }
+  * {
+    user-select: none;
+    font-family: 'eina';
+  }
 
- .fz18 {
-   font-size: 18px;
- }
+  .title-p {
+    font-size: 19px;
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .fz18 {
+    font-size: 18px;
+  }
 </style>

@@ -3,17 +3,17 @@
         <Modal v-model="isModalActive" width="720">
             <p slot="header" style="color:#42b983;text-align:center">
                 <Icon type="md-mail" />
-                <span>{{ project.projectName}} inbox ({{ project.messages.length }})</span>
+                <span>Your inbox</span>
             </p>
 
             <div slot="header" style="text-align: center;">
                 <br>
-                <Button v-if="isAdmin()" @click="deleteAll()"><h3><Icon type="md-trash" /> Delete all</h3></Button>
+                <Button @click="deleteAll()"><h3><Icon type="md-trash" /> Delete all</h3></Button>
             </div>
 
             <div style="text-align:center">
                 <ul>
-                    <li style="list-style: none; font-size: 18px; margin-top: 10px;" v-for="message in project.messages.slice().reverse()">
+                    <li style="list-style: none; font-size: 18px; margin-top: 10px;" v-for="message in user.messages.slice().reverse()">
                         <Card style="border: 1px solid #999;">
                             <h2 slot="title"><Icon type="md-person" /> {{ message.author }}</h2>
                             <p class="fz18" style="white-space: pre;">{{ message.content }}</p>
@@ -22,13 +22,13 @@
                     </li>
                 </ul>
 
-                <h2 v-if="project.messages.length == 0">No messages yet</h2>
+                <h2 v-if="user.messages.length == 0">No messages yet</h2>
             </div>
             <div slot="footer">
                 <Button @click="() => this.isModalActive = false" type="success" size="large">OK</Button>
             </div>
         </Modal>
-    </div>    
+    </div>
 </template>
 
 <script>
@@ -37,9 +37,9 @@
     var API = "http://localhost:1337/";
 
     export default {
-        name: 'ProjectInboxModal',
+        name: 'UserInbox',
         props: {
-            project: Object
+            user: Object
         },
         data() {
             return {
@@ -47,38 +47,33 @@
             }
         },
         methods: {
-            toggle()
-            {
+            toggle() {
                 this.isModalActive = true;
             },
-            deleteAll()
-            {
-                axios(API + "deleteAllInboxMessages", {
-                    method: 'post',
-                    data: {
-                        projectName: this.project.projectName
-                    },
-                    auth: {
-                        username: this.username || localStorage.getItem('username'),
-                        password: this.password || localStorage.getItem('password')
+            deleteAll() {
+                // here we check if user has any messages, if not then there is nothing to delete
+                // just show a message
+                if(this.user.messages.length != 0) 
+                {
+
+                    var authentication = {
+                        username: localStorage.getItem('username'),
+                        password: localStorage.getItem('password')
                     }
-                })
-                .then(response => {
-                    this.$parent.setProject(response.data);
+
+                    axios(API + "clearUserInbox", {
+                        method: 'get',
+                        auth: authentication
+                    })
+                    .then(response => {
+                        this.$parent.setUser(response.data);
+                        this.$Message.success('Done!');
+                    })
+                    .catch(err => this.$Message.error(err));
+                }
+                else
                     this.$Message.success('Done!');
-                })
-                .catch(err => this.$Message.error(err));
-            },
-            isAdmin()
-            {
-                return this.project.admins.includes(localStorage.getItem('username'));
             }
         }
     }
 </script>
-
-<style>
-    .fz18 {
-        font-size: 18px;
-    }
-</style>

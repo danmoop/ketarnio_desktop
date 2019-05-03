@@ -2,6 +2,8 @@
     <div>
         <ProjectCreationModal ref="projectModal" :user="this.user"></ProjectCreationModal>
         <SetNoteModal ref="NoteModal" :user="this.user"></SetNoteModal>
+        <UserInbox ref="userInboxModal" :user="this.user"></UserInbox>
+        <SendMessageModal ref="sendMessageModal"></SendMessageModal>
         
         <Row>
             <Col class="leftBlock text-center p10" span="4">
@@ -9,20 +11,25 @@
                 <h3><Icon type="ios-mail-outline" />{{ user.email }}</h3>
                 <Divider />
                 <Button @click="() => this.$refs.projectModal.toggle()" class="mt-5" type="text" long>
-                    <h2><Icon type="ios-brush-outline" /> Create Project</h2>
+                    <p class="title-p"><Icon type="ios-brush-outline" /> Create Project</p>
                 </Button><br>
 
-                <Button class="mt-5" type="text" long>
-                    <h2><Icon type="ios-mail-outline" /> Inbox <Badge type="primary" :count="user.messages.length"></Badge></h2>
+                <Button @click="() => this.$refs.userInboxModal.toggle()" class="mt-5" type="text" long>
+                    <p class="title-p"><Icon type="ios-mail-outline" /> Inbox <span v-html="badge()"></span></p>
                 </Button><br>
 
+                <Button @click="() => this.$refs.sendMessageModal.toggle()" class="mt-5" type="text" long>
+                    <p class="title-p"><Icon type="md-send" /> Send a message</p>
+                </Button><br>
+                
+
                 <Button class="mt-5" type="text" long>
-                    <h2><Icon type="ios-build-outline" /> Edit Profile Info</h2>
+                    <p class="title-p"><Icon type="ios-build-outline" /> Edit Profile Info</p>
                 </Button><br>
 
                 <Divider />
                 <Button class="mt-5" type="text" long @click="logOut()">
-                    <h2><Icon type="ios-log-out" /> Log Out</h2>
+                    <p class="title-p"><Icon type="ios-log-out" /> Log Out</p>
                 </Button><br>
             </Col>
             <Col span="20">
@@ -32,7 +39,7 @@
                             <h2 class="wh">Your dashboard</h2>
                         </Col>
                         <Col span="12" class="text-right">
-                            <Button @click="refreshProfile()"><Icon type="ios-refresh-circle-outline" /> Refresh</Button>
+                            <Button @click="refreshProfile(true)"><Icon type="ios-refresh-circle-outline" /> Refresh</Button>
                         </Col>
                     </Row>
                 </div>
@@ -82,92 +89,117 @@
 
 <script>
 
-var remote = require('electron').remote;
+    var remote = require('electron').remote;
 
-import axios from 'axios';
-import ProjectCreationModal from './modals/usermodals/ProjectCreationModal';
-import SetNoteModal from './modals/usermodals/SetNoteModal';
+    import axios from 'axios';
+    import ProjectCreationModal from './modals/usermodals/ProjectCreationModal';
+    import SetNoteModal from './modals/usermodals/SetNoteModal';
+    import UserInbox from './modals/usermodals/UserInbox';
+    import SendMessageModal from './modals/usermodals/SendMessageModal';
 
-var API = 'http://localhost:1337/';
+    var API = 'http://localhost:1337/';
 
-export default {
-    name: 'dashboard',
-    components: {
-        ProjectCreationModal,
-        SetNoteModal
-    },
-    beforeMount() {
-        remote.getCurrentWindow().setTitle("Ketarn - Dashboard");
+    export default {
+        name: 'dashboard',
+        components: {
+            ProjectCreationModal,
+            SetNoteModal,
+            UserInbox,
+            SendMessageModal
+        },
+        beforeMount() {
+            remote.getCurrentWindow().setTitle("Ketarn - Dashboard");
 
-        this.signIn(); // delete then
-        //this.user = this.$route.params.user;
-    },
-    data() {
-        return {
-            user: Object
-        }
-    },
-    methods: {
-        signIn()
-        {
-            var authentication = {
-                username: this.username || localStorage.getItem('username'),
-                password: this.password || localStorage.getItem('password')
+            this.signIn(); // delete then
+            //this.user = this.$route.params.user;
+        },
+        data() {
+            return {
+                user: Object,
             }
-            axios(API + 'loginRequest', {
-                method: 'get',
-                auth: authentication
-            })
-            .then(response => { 
-                this.user = response.data;
-            });
         },
-        logOut()
-        {
-            this.$router.push('/');
-            localStorage.clear();
-        },
-        refreshProfile()
-        {
-            this.$Loading.start();
-
-            var authentication = {
-                username: localStorage.getItem('username'),
-                password: localStorage.getItem('password')
-            }
-
-            axios(API + "refreshUserProfile", {
-                method: 'get',
-                auth: authentication
-            }).then(response => {
-                this.user = response.data;
-                this.$Loading.finish();
-                this.showMessage('Done!', 1.5);
-            }).catch(err => {
-                this.showError("Unable to refresh profile", 1.5);
-                this.$Loading.error();
-            });
-        },
-        showMessage(text, seconds)
-        {
-            this.$Message.success({content: text, duration: seconds});
-        },
-        showError(text, seconds)
-        {
-            this.$Message.error({content: text, duration: seconds});
-        },
-        openProject(project)
-        {
-            this.$router.push({
-                name: 'projectDashboard',
-                params: {
-                    user: this.user,
-                    projectName: project
+        methods: {
+            signIn()
+            {
+                var authentication = {
+                    username: this.username || localStorage.getItem('username'),
+                    password: this.password || localStorage.getItem('password')
                 }
-            });
+                axios(API + 'loginRequest', {
+                    method: 'get',
+                    auth: authentication
+                })
+                .then(response => { 
+                    this.user = response.data;
+                });
+            },
+            logOut()
+            {
+                this.$router.push('/');
+                localStorage.clear();
+            },
+            refreshProfile(isMessageShown)
+            {
+                this.$Loading.start();
+
+                var authentication = {
+                    username: localStorage.getItem('username'),
+                    password: localStorage.getItem('password')
+                }
+
+                axios(API + "refreshUserProfile", {
+                    method: 'get',
+                    auth: authentication
+                }).then(response => {
+                    this.user = response.data;
+                    this.$Loading.finish();
+    
+                    if(isMessageShown)
+                        this.showMessage('Done!', 1.5);
+                }).catch(err => {
+                    this.showError("Unable to refresh profile", 1.5);
+                    this.$Loading.error();
+                });
+            },
+            showMessage(text, seconds)
+            {
+                this.$Message.success({content: text, duration: seconds});
+            },
+            showError(text, seconds)
+            {
+                this.$Message.error({content: text, duration: seconds});
+            },
+            openProject(project)
+            {
+                this.$router.push({
+                    name: 'projectDashboard',
+                    params: {
+                        user: this.user,
+                        projectName: project
+                    }
+                });
+            },
+            setUser(user)
+            {
+                this.user = user;
+            },
+            badge() 
+            {
+                /*
+                    actually badge shuold be displayed as following:
+                    <Badge type="primary" :count="user.messages.length"></Badge>
+                    but I use this function to modify text's font
+                */
+
+                var count = this.user.messages.length;
+
+                return `
+                <span class="ivu-badge"> 
+                    <sup class="ivu-badge-count ivu-badge-count-alone ivu-badge-count-primary" style='font-family: "eina";'>${count}</sup>
+                </span>`;
+            }
         }
     }
-}
 </script>
 
 <style>

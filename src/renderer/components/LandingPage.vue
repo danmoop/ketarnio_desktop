@@ -18,8 +18,8 @@
       <div class="card bordered">
         <h1 class="header-big">Ketarn</h1>
         <h2>Already have an account - Sign In!</h2>
-        <Input v-model="username" class="m10" placeholder="Username" style="width: 300px;" /><br>
-        <Input v-model="password" class="m10" type="password" placeholder="Password" style="width: 300px;" /><br>
+        <Input size="large" v-model="username" class="m10" placeholder="Username" style="width: 300px;" /><br>
+        <Input size="large" v-model="password" class="m10" type="password" placeholder="Password" style="width: 300px;" /><br>
         <Button @click="signIn()" type="primary" class="m10">Sign In</Button><br>
         <Button @click="toggleScreens()" class="m10" type="dashed">Or Sign Up</Button><br>
       </div>
@@ -28,9 +28,9 @@
       <div class="card bordered">
         <h1 class="header-big">Ketarn</h1>
         <h2>Don't have an account yet - Sign Up!</h2>
-        <Input v-model="username" class="m10" placeholder="Username" style="width: 300px;" /><br>
-        <Input v-model="email" class="m10" placeholder="E-mail" style="width: 300px;" /><br>
-        <Input v-model="password" class="m10" type="password" placeholder="Password" style="width: 300px;" /><br>
+        <Input size="large" v-model="username" class="m10" placeholder="Username" style="width: 300px;" /><br>
+        <Input size="large" v-model="email" class="m10" placeholder="E-mail" style="width: 300px;" /><br>
+        <Input size="large" v-model="password" class="m10" type="password" placeholder="Password" style="width: 300px;" /><br>
         <Button @click="signUp()" type="success" class="m10">Sign Up</Button><br>
         <Button @click="toggleScreens()" class="m10" type="dashed">Or Sign In</Button><br>
       </div>

@@ -6,9 +6,9 @@
                 <span>Create a project</span>
             </p>
             <div style="text-align:center">
-                <Input type="text" v-model="projectName" placeholder="Project name">
+                <Input size="large" type="text" v-model="projectName" placeholder="Project name">
                 </Input> <br><br>
-                <Input type="number" v-model="projectBudget" placeholder="Project budget">
+                <Input size="large" type="number" v-model="projectBudget" placeholder="Project budget">
                 </Input>
             </div>
             <div slot="footer">
