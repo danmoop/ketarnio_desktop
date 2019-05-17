@@ -17,6 +17,7 @@
                         <Card style="border: 1px solid #999;">
                             <h2 slot="title"><Icon type="md-person" /> {{ message.author }}</h2>
                             <p class="fz18" style="white-space: pre;">{{ message.content }}</p>
+                            <Divider />
                             <p class="fz18">Message sent on {{ message.timeStamp }}</p>
                         </Card>
                     </li>

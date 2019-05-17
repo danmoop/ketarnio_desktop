@@ -1,13 +1,13 @@
 <template>
   <div class="wrapper">
-    <Modal v-model="autoLoginModal" width="360">
+    <Modal v-model="autoLoginModal" width="560">
         <p slot="header" style="color:#42b983;text-align:center">
             <Icon type="ios-information-circle"></Icon>
             <span>Auto sign in confirmation</span>
         </p>
         <div style="text-align:center">
-            <p>Saved username and password found keyed in before.</p>
-            <p>Would you like to try to sign in using those credentials?</p>
+            <h2>Saved username and password found keyed in before.</h2>
+            <h2>Would you like to try to sign in using those credentials?</h2>
         </div>
         <div slot="footer">
             <Button @click="autoSignIn()" type="success" size="large" long>Sign in</Button>

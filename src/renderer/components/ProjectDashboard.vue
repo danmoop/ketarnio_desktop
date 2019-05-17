@@ -5,6 +5,7 @@
         <ViewProjectMembersModal ref="membersModal" :project="this.project"></ViewProjectMembersModal>
         <ProjectInboxModal ref="projectInboxModal" :project="this.project"></ProjectInboxModal>
         <ProjectBudgetModal ref="projectBudgetModal" :project="this.project"></ProjectBudgetModal>
+        <InviteMembersModal ref="InviteMembersModal" :project="this.project"></InviteMembersModal>
 
         <Row>
             <Col class="leftBlock text-center p10" span="5">
@@ -22,7 +23,7 @@
                 <Button @click="() => this.$refs.membersModal.toggle()" class="mt-5" type="text" long>
                     <p class="title-p"><Icon type="ios-people-outline" /> View members</p>
                 </Button><br>
-                <Button class="mt-5" type="text" long>
+                <Button @click="() => this.$refs.InviteMembersModal.toggle()" class="mt-5" type="text" long>
                     <p class="title-p"><Icon type="ios-person-add-outline" /> Invite members</p>
                 </Button><br>
                 <Button @click="() => this.$refs.projectBudgetModal.toggle()" class="mt-5" type="text" long>
@@ -124,6 +125,7 @@
     import ViewProjectMembersModal from './modals/projectmodals/ViewProjectMembersModal';
     import ProjectInboxModal from './modals/projectmodals/ProjectInboxModal';
     import ProjectBudgetModal from './modals/projectmodals/ProjectBudgetModal';
+    import InviteMembersModal from './modals/projectmodals/InviteMembersModal';
 
     export default {
         name: 'projectDashboard',
@@ -132,7 +134,8 @@
             ViewProjectAdminsModal,
             ViewProjectMembersModal,
             ProjectInboxModal,
-            ProjectBudgetModal
+            ProjectBudgetModal,
+            InviteMembersModal
         },
         data() {
             return {
